@@ -3,7 +3,7 @@
 [explain]: http://llever.com/explain.svg
 [source]: https://github.com/chinanf-boy/Source-Explain
     
-「 Vue 驱动的静态网站生成器 」
+「 Vue 驱动的静态网站生成器 」⏰ 2018 7.16
 
 [github source](https://github.com/vuejs/vuepress)
 
