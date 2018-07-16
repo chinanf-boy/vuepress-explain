@@ -43,7 +43,7 @@ await resolveOptions(sourceDir)
 ``` js
 const fs = require('fs-extra')
 const path = require('path')
-const globby = require('globby')
+const globby = require('globby') // 查找 匹配 文件/目录
 const createMarkdown = require('../markdown')
 const loadConfig = require('./loadConfig')
 const { encodePath, fileToPath, sort, getGitLastUpdatedTimeStamp } = require('./util')
@@ -59,7 +59,7 @@ const {
 ``` js
 module.exports = async function resolveOptions (sourceDir) {
   const vuepressDir = path.resolve(sourceDir, '.vuepress')
-  const siteConfig = loadConfig(vuepressDir)
+  const siteConfig = loadConfig(vuepressDir) // 加载 目录下的配置
 ```
 
 - [x] [`loadConfig` Ex](loadConfig.ex.md)
@@ -73,10 +73,10 @@ module.exports = async function resolveOptions (sourceDir) {
       const attrs = tag[1]
       if (attrs) {
         for (const name in attrs) {
-          if (name === 'src' || name === 'href') {
+          if (name === 'src' || name === 'href') { //条件 src / href 链接
             const value = attrs[name]
-            if (value.charAt(0) === '/') {
-              attrs[name] = base + value.slice(1)
+            if (value.charAt(0) === '/') { // 第一位字符是不是'/'
+              attrs[name] = base + value.slice(1) // 拼接 此文档网站的根目录与head配置的链接
             }
           }
         }
@@ -85,20 +85,33 @@ module.exports = async function resolveOptions (sourceDir) {
   }
 ```
 
-### 解决outDir
+- 下面例子🌰结果是: ['link', { rel: 'icon', href: **`test/logo.png`** }],
 ``` js
-  // resolve outDir
-  const outDir = siteConfig.dest
-    ? path.resolve(siteConfig.dest)
-    : path.resolve(sourceDir, '.vuepress/dist')
+// config.js
+module.exports = {
+  base: "test"
+  head: [
+    ['link', { rel: 'icon', href: `/logo.png` }], //<== 解析
+    // ...
+  ],
+}
 ```
 
-### 解决主题
+
+### 解决 outDir
+``` js
+  // resolve outDir
+  const outDir = siteConfig.dest // 输出目录确认, 不然
+    ? path.resolve(siteConfig.dest)
+    : path.resolve(sourceDir, '.vuepress/dist') // 默认是 ./.vuepress/dist
+```
+
+### 解决主题:默认/其他
 ``` js
   // resolve theme
   const useDefaultTheme = (
-    !siteConfig.theme &&
-    !fs.existsSync(path.resolve(vuepressDir, 'theme'))
+    !siteConfig.theme && // 外部主题
+    !fs.existsSync(path.resolve(vuepressDir, 'theme')) // 本地定义的主题
   )
   const defaultThemePath = path.resolve(__dirname, '../default-theme')
   let themePath = null
@@ -108,7 +121,7 @@ module.exports = async function resolveOptions (sourceDir) {
 
 ```
   
-### 使用默认主题
+### 1.使用默认主题
 ``` js
   if (useDefaultTheme) {
     // use default theme
@@ -117,17 +130,17 @@ module.exports = async function resolveOptions (sourceDir) {
     themeNotFoundPath = path.resolve(defaultThemePath, 'NotFound.vue')
 ```
   
-### 解决主题布局
+### 2.使用其他主题布局
 ``` js
   } else {
     // resolve theme Layout
 ```
     
-### 使用外部主题
+### 2.1 使用外部主题
 ``` js
     if (siteConfig.theme) {
       // use external theme
-      try {
+      try { 
         themeLayoutPath = require.resolve(`vuepress-theme-${siteConfig.theme}/Layout.vue`, {
           paths: [
             path.resolve(__dirname, '../../node_modules'),
@@ -142,8 +155,12 @@ module.exports = async function resolveOptions (sourceDir) {
       }
     } 
 ```
+
+- 外部主题的 *npm包名称* 是:`vuepress-theme-` + **主题名**
+
+> 比如 vuepress的主题是: `vuepress-theme-vue` > 可以 局部或全局 安装. 
     
-### 使用自定义主题
+### 2.2 使用自定义主题
 ``` js
     else {
       // use custom theme
@@ -160,9 +177,11 @@ module.exports = async function resolveOptions (sourceDir) {
     // resolve theme NotFound
     themeNotFoundPath = path.resolve(themePath, 'NotFound.vue')
     if (!fs.existsSync(themeNotFoundPath)) {
-      themeNotFoundPath = path.resolve(defaultThemePath, 'NotFound.vue')
+      themeNotFoundPath = path.resolve(defaultThemePath, 'NotFound.vue') // 没有就默认
     }
 ```
+
+- **404页面**, 发挥想象力罗
 
 ### 解决主题 增强应用
 ``` js
@@ -174,13 +193,17 @@ module.exports = async function resolveOptions (sourceDir) {
   }
 ```
 
+- `enhanceApp.js` 可以用来 体现 vue组件的 使用和效果呈现
+
+> 比如: [**vue-foldable**可折叠组件](https://github.com/ulivz/vue-foldable) ,通过`enhanceApp.js`文件中[导入自己的vue组件: <**csdn-foladable**>](https://github.com/ulivz/vue-foldable/blob/master/docs/.vuepress/enhanceApp.js#L22),然后在 md文档中[应用该组件](https://sourcegraph.com/github.com/ulivz/vue-foldable@master/-/blob/docs/README.md?view=code#L173), 最终是[这样的网页呈现](https://vue-foldable.ulivz.com/#vue-foldable-csdn)
+
 ### 解析主题配置
 ``` js
   // resolve theme config
   const themeConfig = siteConfig.themeConfig || {}
 ```
 
-### 解决 algolia
+### 解决 algolia 搜寻
 ``` js
   // resolve algolia
   const isAlgoliaSearch = (
@@ -196,13 +219,15 @@ module.exports = async function resolveOptions (sourceDir) {
   const markdown = createMarkdown(siteConfig)
 ```
 
-### 解析 pageFiles
+- [ ] [`createMarkdown` Ex](../markdown/readme.md)
+
+### 找到 pageFiles 路径
 ``` js
   // resolve pageFiles
   const pageFiles = sort(await globby(['**/*.md', '!.vuepress', '!node_modules'], { cwd: sourceDir }))
 ```
 
-### 解决 lastUpdated
+### 要不要 lastUpdated
 ``` js
   // resolve lastUpdated
   const shouldResolveLastUpdated = (

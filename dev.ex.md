@@ -66,7 +66,7 @@ module.exports = async function dev (sourceDir, cliOptions = {}) {
 
 ```
 
-- [ ] [`prepare` Explain](./prepare.ex.md)
+- [ ] [`prepare` Explain](./prepare/readme.md)
 
 > 
 

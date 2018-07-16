@@ -23,7 +23,7 @@ await prepare(dir)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## prepare/index.js
+## lib/prepare/index.js
 
 ### require
 ``` js
@@ -49,7 +49,7 @@ module.exports = async function prepare (sourceDir) {
 
 ```
 
-- [ ] [`resolveOptions` Explain](./prepare/resolveOptions.ex.md)
+- [ ] [`resolveOptions` Explain](resolveOptions.ex.md)
 
 ### 2.生成 路由和用户组件 注册代码
 ``` js
@@ -64,9 +64,9 @@ module.exports = async function prepare (sourceDir) {
 
 ```
 
-- [ ] [`genRoutesFile` Explain](./prepare/codegen.ex.md#genroutesfile)
-- [ ] [`genComponentRegistrationFile` Explain](./prepare/codegen.ex.md#gencomponentregistrationfile)
-- [ ] [`writeTemp` Explain](./prepare/util.md#writetemp)
+- [ ] [`genRoutesFile` Explain](codegen.ex.md#genroutesfile)
+- [ ] [`genComponentRegistrationFile` Explain](codegen.ex.md#gencomponentregistrationfile)
+- [ ] [`writeTemp` Explain](util.md#writetemp)
 
 ### 3.生成 siteData
 ``` js
