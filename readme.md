@@ -107,9 +107,12 @@ if (!semver.satisfies(process.version, requiredVersion)) {
 
 [chalk] 作为`node的颜色库`是众所周知, 但是当你仅仅需要 不大不小的颜色输出时
 [chalk] 就显得过大了 
-[chalk 大小](https://bundlephobia.com/result?p=chalk@2.4.1)
 
-也许我们可以使用[ansi-colors] 小点的库 [ansi-colors 大小](https://bundlephobia.com/result?p=ansi-colors@2.0.2)
+> [chalk 大小](https://bundlephobia.com/result?p=chalk@2.4.1)
+
+也许我们可以使用[ansi-colors] 小点的库 
+
+> [ansi-colors 大小](https://bundlephobia.com/result?p=ansi-colors@2.0.2)
 
 
 [ansi-colors]: https://github.com/doowb/ansi-colors
